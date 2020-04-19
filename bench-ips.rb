@@ -5,11 +5,7 @@ require 'benchmark/ips'
 Benchmark.ips do |x|
   x.config(iterations: 3, time: 5, warmup: 2)
 
-  x.report("short string creations") { 'short one' }
-  x.report("long string creations") do
-    'abcdefghijklmnopqrstuvwxyz123456789)*&^%$#@!QWERTYUIOPLKJHGFDSAZXCVBNM,.\';][=-'
-  end
-  x.report("2^8 pack Unicode string creations") do
+  x.report("2^8 Unicode string packs") do
     (0..2**8).to_a.pack('U*')
   end
 
@@ -29,12 +25,12 @@ Benchmark.ips do |x|
 
   x.report("Random.rand")     { Random.rand }
   x.report("Random.srand")    { Random.srand }
-  [128, 512, 2048].each do |size|
+  [128, 512].each do |size|
     x.report("Random.urandom #{size}") { Random.urandom size }
     x.report("Random.urandom #{size} sort") { Random.urandom(size).split('').sort }
   end
 
-  [512, 2048, 4096].each do |size|
+  [2048, 4096].each do |size|
     x.report("SecureRandom.base64 #{size}") { SecureRandom.base64(size) }
     x.report("SecureRandom.hex #{size}")  { SecureRandom.hex(size) }
     x.report("SecureRandom.random bytes #{size}") { SecureRandom.random_bytes(size) }

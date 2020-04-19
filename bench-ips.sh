@@ -1,8 +1,9 @@
 #!/bin/sh
 
-printf 'Benchmarking '
+printf 'Benchmarking iterations per second'
 ruby -v
+printf "\n"
 
-JRUBY_OPTS='--dev' /usr/bin/time -v ruby bench-ips.rb
+JRUBY_OPTS='--dev' /usr/bin/time ruby bench-ips.rb
 
 printf "\ndone!\n"
