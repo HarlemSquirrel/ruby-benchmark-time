@@ -83,6 +83,7 @@ class JobManager
     TOTAL_THREAD_COUNT.times do |i|
       # Wait until there are fewer running threads then our limit
       until ready_for_more_threads?
+        prune_job_queue!
         sleep 0.001
       end
 
@@ -92,12 +93,14 @@ class JobManager
         # Print a dot to show that the job has completed and we're at the end of this thread.
         print '.'
       end
+
     end
 
     # Make sure all threads have completed by joining them to the main thread.
-    @job_threads.each(&:join)
+    job_threads.each(&:join)
 
     puts "\nThreads are all joined now."
+    puts Thread.list.length
 
     # print_threads_status
 
@@ -105,6 +108,15 @@ class JobManager
   end
 
   private
+
+  ##
+  # Remove the completed threads them from @job_threads so we can keep
+  # the list length down especially when we want to perform thousands or million of
+  # jobs.
+  #
+  def prune_job_queue!
+    @job_threads.select!(&:alive?)
+  end
 
   def print_threads_status(current = nil)
     msg = Time.now.strftime('%H:%M:%S - ')
